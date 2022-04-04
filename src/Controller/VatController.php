@@ -5,8 +5,8 @@ use App\Entity\Calculation;
 use App\Repository\CalculationRepository;
 use App\Form\CalcType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\{Response,Request,StreamedResponse};
+
 use Symfony\Component\Routing\Annotation\Route;
 
 class VatController extends AbstractController
@@ -36,7 +36,7 @@ class VatController extends AbstractController
       $form->handleRequest($request);
 
       if($form->isSubmitted() && $form->isValid()) {
-        
+
         $cost = $calc->getCost();
         $rate = $calc->getRate();
         //entity manager
@@ -59,4 +59,33 @@ class VatController extends AbstractController
          'calculations' => $calculations
       ]);
     }
+    /**
+     * @Route("/export", name="export")
+     */
+    public function exportCSV(CalculationRepository $calculationRepository): Response
+    {
+      $results = $calculationRepository->findAll();
+      $response = new StreamedResponse();
+         $response->setCallback(
+             function () use ($results) {
+                 $handle = fopen('php://output', 'r+');
+                 foreach ($results as $row) {
+                     //array list fields you need to export
+                     $data = array(
+                         $row->getId(),
+                         $row->getCost(),
+                         $row->getRate(),
+                         $row->getVat(),
+                         $row->getTotal()
+                     );
+                     fputcsv($handle, $data);
+                 }
+                 fclose($handle);
+             }
+         );
+         $response->headers->set('Content-Type', 'application/force-download');
+         $response->headers->set('Content-Disposition', 'attachment; filename="export.csv"');
+
+         return $response;
+     }
 }
