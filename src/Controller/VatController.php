@@ -47,6 +47,7 @@ class VatController extends AbstractController
         $calc->setVat($vat);
         $calc->setTotal($total);
         $em->flush();
+        $this->addFlash('success','You will pay £'.number_format($vat,2).' on £'.number_format($cost,2).' at a rate of '.$rate.'%, total including VAT £'.number_format($total,2).'.');
         return $this->redirect('/');
       }
 
@@ -84,7 +85,7 @@ class VatController extends AbstractController
              }
          );
          $response->headers->set('Content-Type', 'application/force-download');
-         $response->headers->set('Content-Disposition', 'attachment; filename="export.csv"');
+         $response->headers->set('Content-Disposition', 'attachment; filename="past_calculations.csv"');
 
          return $response;
      }
