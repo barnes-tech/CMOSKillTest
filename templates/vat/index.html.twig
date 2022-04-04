@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}VAT Calculator{% endblock %}
+
+{% block body %}
+<div class="container-lg p-0">
+  <header class="bg-success m-0 p-1">
+    <h1 class="text-light text-center">Vat Calculator</h1>
+  </header>
+  <section class="row m-0 p-0">
+    <!--column for form-->
+    <div class="col bg-success text-light">
+    <h2 class="text-center">Make a VAT calculation</h2>
+      {{ form(form) }}
+    </div>
+    <!--column for table-->
+    <div class="col-8">
+      <h2 class="text-center">Past Calculations</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Cost</th>
+            <th scope="col">Rate %</th>
+            <th scope="col">VAT</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for calc in calculations %}
+          <tr>
+            <td scope="row">£{{ calc.cost}}</td>
+            <td>{{ calc.rate }}%</td>
+            <td>£{{ calc.vat }}</td>
+            <td>£{{ calc.total }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}
