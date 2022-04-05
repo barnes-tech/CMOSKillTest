@@ -22,10 +22,11 @@ class CalcType extends AbstractType
                 'min' => '0'
               ]
             ])
-            //select box for rate 
+            //select box for rate
             ->add('rate', EntityType::class ,[
               'class' => CountryTax::class,
               'placeholder' => 'Select VAT tax code..',
+              'choice_label' => 'country',
               'mapped' => true
             ])
             ->add('Save', SubmitType::class, [
